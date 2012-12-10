@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"bytes"
 	"fmt"
 	"github.com/nsf/termbox-go"
@@ -745,7 +746,15 @@ func (g *godit) has_unsaved_buffers() bool {
 	return false
 }
 
+func usage() {
+	fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+	fmt.Fprintf(os.Stderr, "  %s FILE...\n", os.Args[0])
+	flag.PrintDefaults()
+}
+
 func main() {
+	flag.Usage = usage
+	flag.Parse()
 	err := termbox.Init()
 	if err != nil {
 		panic(err)
@@ -753,7 +762,8 @@ func main() {
 	defer termbox.Close()
 	termbox.SetInputMode(termbox.InputAlt)
 
-	godit := new_godit(os.Args[1:])
+	flag.Parse()
+	godit := new_godit(flag.Args())
 	godit.resize()
 	godit.draw()
 	termbox.SetCursor(godit.cursor_position())
